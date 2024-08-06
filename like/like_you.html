@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+/*            background-color: #f0f0f0;*/
+            background-color: black;
+            overflow: hidden; /* Prevent scrolling when the GIF is displayed */
+        }
+
+        #top, #bottom {
+            padding: 20px;
+            background-color: darkgrey; /* Royal Blue background color */
+/*            color: white; */
+            color: black; /* White text color */
+            font-size: 18px;
+            font-weight: bold; /* Bold text */
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 2px solid #00a0df;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 30px;
+        }
+
+        #middle {
+            padding: 20px;
+            cursor: pointer; /* Change cursor to a pointer on hover */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #middle img {
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-left,
+        .text-right {
+            font-weight: bold;
+            writing-mode: vertical-rl; /* Vertical text */
+            text-orientation: upright; /* Vertical text orientation */
+            color: #f0f0f0;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('1.gif');
+/*            background-image: url('rainHeartsSlow2.gif');*/
+/*            background-image: url('rainHeartsSlow2.gif');*/
+            background-size: cover;
+            background-repeat: no-repeat;
+            display: none; /* Initially hidden */
+            z-index: 999; /* Make sure it covers the content */
+        }
+    </style>
+</head>
+<body>
+    <div id="top"></div>
+    <div id="middle">
+        <span class="text-left">Tap</span>
+        <img src="zia_enhanced.jpg" alt="Middle Image" id="audioButton" alt="Image of person you like">
+        <span class="text-right">Yourself</span>
+    </div>
+    <div id="bottom"></div>
+
+    <audio id="audio" src="kaise_tujse.mp3" loop></audio>
+
+    <div id="overlay"></div>
+
+    <script>
+        var top_text = "Har Cheez Waqt pr Aachi lagti hai, Aur..";
+        var bottom_text = "Ek Aap ho Jo Har Waqt Aache Lagte Ho !!"
+        var typing_speed = 150;
+        let gif_no=1;
+
+        function typeWriter(elementId, text, speed, callback) {
+            const element = document.getElementById(elementId);
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += '<span style="font-weight: bold;font-style: italic;">' + text.charAt(i) + '</span>';
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        window.onload = function () {   
+            typeWriter("top", top_text, typing_speed, function () {
+                setTimeout(function () {
+                    typeWriter("bottom", bottom_text, typing_speed, function () {
+                        // Both top and bottom text have finished typing.
+                    });
+                }, 1000); // Add a delay between the two animations (1 second)
+            });
+
+            const audioButton = document.getElementById("audioButton"); 
+            const audio = document.getElementById("audio");
+            const overlay = document.getElementById("overlay");
+            let isPlaying = false;
+            let firstClick = true;
+
+            // Track clicks on the entire page
+            document.body.addEventListener("click", handleClick);
+
+            var clickTimeout;
+            var clickDelay = 300; // Time in milliseconds to distinguish between single and double click
+
+            function handleClick(event) {
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    // Double click detected, handle accordingly
+                    doubleClick(event);
+                } else {
+                    clickTimeout = setTimeout(function() {
+                        // Single click detected
+                        singleClick(event);
+                        clickTimeout = null;
+                    }, clickDelay);
+                }
+            }
+
+            function doubleClick (event) {
+                    audio.pause();
+                    overlay.style.display = "none"; // Hide the overlay when the music is paused
+            }
+
+            function singleClick (event) {
+                // if (event.target === audioButton) {
+                    if (audio.paused) {
+                        audio.play();
+                        overlay.style.display = "block"; // Show the overlay when the music is playing
+                    } else {
+                        if (gif_no < 3) {gif_no++;} else {gif_no = 1;}
+                            overlay.style.backgroundImage = "url('"+ String(gif_no) + ".gif')";
+                        }
+                // }
+            }
+        };
+    </script>
+</body>
+</html>
